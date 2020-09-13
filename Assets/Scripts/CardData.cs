@@ -36,9 +36,32 @@ public class CardData : ScriptableObject
     [SerializeField] 
     [Tooltip("Leave at 0 for non-horde cards")]
     int Health;
+    [SerializeField]
+    [Tooltip("Leave at 0 for non-horde cards")]
+    int CurrentHealth;
 
     public CardType cardtype;
     
     
+    public int GetAttackDamage()
+    {
+        int damage = BaseAttack;
+        damage += Random.Range(AttackVarianceMin, AttackVarianceMax);
+        return damage;
+    }
+
+    public void TakeDamage(int amount)
+    {
+        CurrentHealth -= amount;
+
+    }
+    public int GetHealth()
+    {
+        return CurrentHealth;
+    }
+    public void ResetCurrentHealth()
+    {
+        CurrentHealth = Health;
+    }
     
 }

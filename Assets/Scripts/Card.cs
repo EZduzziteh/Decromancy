@@ -13,34 +13,46 @@ public class Card : MonoBehaviour
     public Quaternion rotInHand;
     // Start is called before the first frame update
 
-    void Start()
+    void Awake()
     {
-        
+        data.ResetCurrentHealth();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (selected)
+        if (hand)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
+            if (hand.player.playerID == hand.player.turnman.playerTurn)
             {
-                transform.position = new Vector3( hit.point.x,transform.position.y,hit.point.z);
+                if (selected)
+                {
+                    RaycastHit hit;
+                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
+                    {
+                        transform.position = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+                    }
+                    transform.forward = posInHand - transform.position;
+
+
+
+                }
             }
-            transform.forward =  posInHand - transform.position ;
-
-
-           
         }
     }
 
     private void OnMouseEnter()
     {
-        if (!selected)
+        if (hand.player.ActiveHordeCard == this)
+        {
+            transform.Translate(0, 5, 1f);
+          
+        }
+        else if (!selected)
         {
             
-            transform.Translate(0, 2, -0.5f);
+            transform.Translate(0, 3, -0.5f);
+          
         }
     }
     private void OnMouseExit()
@@ -53,21 +65,24 @@ public class Card : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!selected)
+        if (hand.player.playerID == hand.player.turnman.playerTurn)
         {
-            ToggleSelect();
-        }
-        else
-        {
-            if (transform.position.z >= hand.player.ActiveCardZValue)
+            if (!selected)
             {
-                if (transform.position.x <= hand.player.ActiveCardXValue && transform.position.x >= -hand.player.ActiveCardXValue)
-                {
-                    Debug.Log("PlayCard");
-                }
-               
+                ToggleSelect();
             }
+            else
+            {
+                if (transform.position.z >= hand.player.ActiveCardZValue)
+                {
+                    if (transform.position.x <= hand.player.ActiveCardXValue && transform.position.x >= -hand.player.ActiveCardXValue)
+                    {
+                        hand.SetActiveHorde(this);
+                    }
 
+                }
+
+            }
         }
     }
 

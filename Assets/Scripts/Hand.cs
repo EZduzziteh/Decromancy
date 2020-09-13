@@ -78,6 +78,14 @@ public class Hand : MonoBehaviour
 
 
     }
+    public void SetActiveHorde(Card card)
+    {
+        card.posInHand = ActiveHordePoint.transform.position;
+        card.rotInHand = Quaternion.Euler(0, 180, 0);
+        DeselectAll();
+        cards.Remove(card);
+        player.ActiveHordeCard = card;
+    }
     public void DeselectAll()
     {
         foreach(Card card in cards)
@@ -113,5 +121,20 @@ public class Hand : MonoBehaviour
             }
         }
         return powerCount;
+    }
+
+    public Card GetRandomHorde()
+    {
+        List<Card> hordecards = new List<Card>();
+        foreach (Card card in cards)
+        {
+            if (card.data.cardtype == CardData.CardType.Horde)
+            {
+                hordecards.Add(card);
+            }
+        }
+
+        int randomnum = Random.Range(0, hordecards.Count);
+        return hordecards[randomnum];
     }
 }

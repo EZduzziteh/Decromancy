@@ -9,24 +9,30 @@ public class Player : MonoBehaviour
   
     public Deck HordeDeck;
     public Deck PowerDeck;
-    Hand hand;
+    public Hand hand;
     public int hordeSize = 5;
     public int powerSize = 0;
     public float ActiveCardZValue=3.0f;
     public float ActiveCardXValue=5.0f;
+    public Card ActiveHordeCard;
+    public TurnManager.PlayerTurn playerID;
+    public TurnManager turnman;
 
+    public bool isAIControlled=true;
+    public bool hasDrawn;
 
     private void Start()
     {
 
        
-        DrawHand();
+       
     }
 
     // Start is called before the first frame update
     void Awake()
     {
         hand = GetComponent<Hand>();
+        turnman = FindObjectOfType<TurnManager>();
     }
 
     // Update is called once per frame
@@ -39,20 +45,35 @@ public class Player : MonoBehaviour
     }
 
 
-    void DrawHand()
+    public void DrawHand()
     {
-        for (int i = hand.GetHordeCount(); i < hordeSize; i++)//#todo check for horde/power separately
-        {
-            Card card = HordeDeck.Draw();
-            card.hand = hand;
-           hand.cards.Add(card);
 
-        }
         /*for (int i = hand.GetPowerCount(); i < hordeSize; i++)//#todo check for horde/power separately
         {
             hand.cards.Add(PowerDeck.Draw());
         }*/
 
-        hand.Display();
+        StartCoroutine(DrawHandDelayer());
+        
+    }
+
+
+
+
+    private IEnumerator DrawHandDelayer()
+    {
+        WaitForSeconds wait = new WaitForSeconds(0.72f);
+        for (int i = hand.GetHordeCount(); i < hordeSize; i++)//#todo check for horde/power separately
+        {
+            Card card = HordeDeck.Draw();
+            card.hand = hand;
+            hand.cards.Add(card);
+            hand.Display();
+
+
+            yield return wait;
+
+        }
+        hasDrawn =true;
     }
 }
